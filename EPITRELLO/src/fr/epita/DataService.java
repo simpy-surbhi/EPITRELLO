@@ -33,6 +33,9 @@ public class DataService implements EpitrelloDataServerice {
 	private static final String TASK_ERROR = "Task does not exist";
 	private static final String USER_ERROR = "User does not exist";
 	
+	/**
+	 * Initialization of collections for storing the list, tasks information
+	 */
 	private DataService() {
 		users = new LinkedHashSet<>();
 		lists = new LinkedHashSet<>();
@@ -43,6 +46,11 @@ public class DataService implements EpitrelloDataServerice {
 
 		outputFile = System.getProperty("user.dir")+"/output/"+Calendar.getInstance().getTimeInMillis()+"_Output.txt";
 	}
+	
+	/**
+	 * creator function to return the object of DataService class
+	 * @return
+	 */
 	static EpitrelloDataServerice creator() {
 		if(dataServerice == null) {
 			dataServerice = new DataService();
@@ -402,8 +410,8 @@ public class DataService implements EpitrelloDataServerice {
 		}
 		
 		if(users.isEmpty() || !users.contains(userName)) {
-			writeToFile("User does not exist");
-			return "User does not exist";
+			writeToFile(USER_ERROR);
+			return USER_ERROR;
 		}
 
 		if(tasks.isEmpty()) {
@@ -478,8 +486,8 @@ public class DataService implements EpitrelloDataServerice {
 		}
 		
 		if(!users.contains(user)) {
-			writeToFile("User does not exist");
-			return "User does not exist";
+			writeToFile(USER_ERROR);
+			return USER_ERROR;
 		}
 		
 		List<String> str = new ArrayList<>();
@@ -524,6 +532,25 @@ public class DataService implements EpitrelloDataServerice {
 		}
 		return status; 
 	    
+	}
+	@Override
+	public String deleteList(String list) {
+		if(list == null || list.isEmpty()) {
+			return "Invalid input";
+		}
+		if(lists.isEmpty() || !lists.contains(list)) {
+			writeToFile(LIST_ERROR);
+			return LIST_ERROR;
+		}
+		
+		lists.remove(list);
+		for(Task task: tasks.values()) {
+			if(task.getList().equals(list)) {
+				tasks.remove(task.getName());
+			}
+		}
+		writeToFile(SUCCESS);
+		return SUCCESS;
 	}
 	
 

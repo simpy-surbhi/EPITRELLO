@@ -4,7 +4,8 @@ package fr.epita;
  * Interface class where functions are listed
  *
  */
- /*@startuml
+
+/*@startuml
 autonumber
 actor User
 User --> Main
@@ -149,6 +150,13 @@ public interface EpitrelloDataServerice {
 	 */
 	String deleteTask(String task);
 
+	/**
+	 * Function to remove the list and corresponding tasks from system. 
+	 * @param List : name of the list which needs to be removed. 
+	 * @return Returns the List does not exist if the list is not present in the system.otherwise return SUCCESS message.
+	 */
+	String deleteList(String list);
+	
 	/**
 	 * Function to print all tasks which are not finished 
 	 * @return all tasks not assigned to the system in the order in which they are equal, returns the desired order.
