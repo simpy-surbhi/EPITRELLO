@@ -1,11 +1,15 @@
 package fr.epita.db;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 public class DBManager {
@@ -34,10 +38,30 @@ public class DBManager {
 		return dbManager;
 	}
 	
+	private Connection getConnection() throws SQLException, IOException {
+		
+		 	Properties prop=new Properties();
+		 	FileInputStream ip;
+			try {
+				ip = new FileInputStream("conf.properties");
+				prop.load(ip);
+			} catch (FileNotFoundException e) {
+				System.out.println("Error occured in reading configuration file: "+e.getLocalizedMessage());
+				return null;
+			}
+			String jdbcUrl = prop.getProperty("jdbc.url");
+			String user = prop.getProperty("jdbc.user");
+			String password = prop.getProperty("jdbc.password");
+			return DriverManager.getConnection(jdbcUrl, user, password);
+		}
+	
 	public void initialize() {
 		try {
 			Class.forName(JDBC_DRIVER); 
-			connection = DriverManager.getConnection(DB_URL,USER,PASS);
+			connection = getConnection();
+			if(connection == null ) {
+				connection = DriverManager.getConnection(DB_URL,USER,PASS);
+			}
 		} catch(Exception ex) {
 			System.err.println("Error occured in db initialization getConnection: "+ex.getLocalizedMessage());
 		}
