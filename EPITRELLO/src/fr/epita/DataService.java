@@ -28,19 +28,22 @@ public class DataService implements EpitrelloDataServerice {
 	private DBManager dbManager;
 	private String outputFile;
 
-	private final String SUCCESS = "Success";
+	private static final String SUCCESS = "Success";
+	private static final String LIST_ERROR = "List does not exist";
+	private static final String TASK_ERROR = "Task does not exist";
+	private static final String USER_ERROR = "User does not exist";
+	
 	private DataService() {
-		// TODO Auto-generated constructor stub
-		users = new LinkedHashSet<String>();
-		lists = new LinkedHashSet<String>();
-		tasks = new LinkedHashMap<String, Task>();
+		users = new LinkedHashSet<>();
+		lists = new LinkedHashSet<>();
+		tasks = new LinkedHashMap<>();
 		dbManager = DBManager.getInstance();
 		dbManager.initialize();
 		users = dbManager.getUsers();
 
 		outputFile = System.getProperty("user.dir")+"/output/"+Calendar.getInstance().getTimeInMillis()+"_Output.txt";
 	}
-	static EpitrelloDataServerice Creator() {
+	static EpitrelloDataServerice creator() {
 		if(dataServerice == null) {
 			dataServerice = new DataService();
 		}
@@ -49,8 +52,8 @@ public class DataService implements EpitrelloDataServerice {
 	
 	@Override
 	public String addUser(String user) {
-		// TODO Auto-generated method stub
 		if(users.contains(user)) {
+			writeToFile("User already exists");
 			return "User already exists";
 		}
 		
@@ -62,23 +65,30 @@ public class DataService implements EpitrelloDataServerice {
 
 	@Override
 	public String addList(String list) {
-		// TODO Auto-generated method stub
-		return lists.add(list)? SUCCESS:"List string already exists";
+		boolean status = lists.add(list);
+		if(status) {
+			writeToFile(SUCCESS);
+			return SUCCESS;
+		} else {
+			writeToFile("List string already exists");
+			return "List string already exists";
+		}
 	}
 
 	@Override
 	public String addTask(String list, String name, int estimatedTime, int priority, String description) {
-		// TODO Auto-generated method stub
 		if( list == null || list.isEmpty() || name == null || name.isEmpty() || estimatedTime <=0 || priority <=0 ) {
 			return "AddTask task failed, reason: entered detail(s) are invalid!!";
 		}
 		
 		if(!lists.contains(list)) {
-			return "List does not exist";
+			writeToFile(LIST_ERROR);
+			return LIST_ERROR;
 		}
 		
 		Task task = tasks.get(name);
 		if(task != null) {
+			writeToFile("Task already exists");
 			return "Task already exists";
 		}
 		
@@ -90,70 +100,70 @@ public class DataService implements EpitrelloDataServerice {
 		task.setName(name);
 		tasks.put(name, task);
 		writeToFile(SUCCESS);
-		return "Success";
+		return SUCCESS;
 	}
 
 	@Override
-	public String editTask(String task_name, int estimatedTime, int priority, String description) {
+	public String editTask(String taskName, int estimatedTime, int priority, String description) {
 		
-		if( task_name == null || task_name.isEmpty() || estimatedTime <=0 || priority <=0 ) {
+		if( taskName == null || taskName.isEmpty() || estimatedTime <=0 || priority <=0 ) {
 			return "EditTask task failed, reason: entered detail(s) are invalid!!";
 		}
 		
-		// TODO Auto-generated method stub
-		if(!tasks.containsKey(task_name)) {
-			return "Task does not exist";
+		if(!tasks.containsKey(taskName)) {
+			writeToFile(TASK_ERROR);
+			return TASK_ERROR;
 		}
 		
-		Task task = tasks.get(task_name);
+		Task task = tasks.get(taskName);
 		task.setDescription(description);
 		task.setEstimatedTime(estimatedTime);
 		task.setPriority(priority);
-		tasks.put(task_name, task);
+		tasks.put(taskName, task);
 		writeToFile(SUCCESS);
 		return SUCCESS;
 	}
 
 	@Override
-	public String assignTask(String task_name, String user) {
-		// TODO Auto-generated method stub
-		if( task_name == null || task_name.isEmpty() || user == null || user.isEmpty()) {
+	public String assignTask(String taskName, String user) {
+		if( taskName == null || taskName.isEmpty() || user == null || user.isEmpty()) {
 			return "AssignTask task failed, reason: entered detail(s) are invalid!!";
 		}
 		
-		if(!tasks.containsKey(task_name)) {
-			return "Task does not exist";
+		if(!tasks.containsKey(taskName)) {
+			writeToFile(TASK_ERROR);
+			return TASK_ERROR;
 		}
 		
 		if(!users.contains(user)) {
-			return "User does not exist";
+			writeToFile(USER_ERROR);
+			return USER_ERROR;
 		}
 		
-		Task task = tasks.get(task_name);
+		Task task = tasks.get(taskName);
 		task.setUser(user);
 		writeToFile(SUCCESS);
 		return SUCCESS;
 	}
 
 	@Override
-	public String printTask(String task_name) {
-		// TODO Auto-generated method stub
-		if(!tasks.containsKey(task_name)) {
-			return "List does not exist";
+	public String printTask(String taskName) {
+		if(!tasks.containsKey(taskName)) {
+			writeToFile(LIST_ERROR);
+			return LIST_ERROR;
 		}
-		String sb = tasks.get(task_name).toString();
+		String sb = tasks.get(taskName).toString();
 		writeToFile(sb);
 		return sb;
 	}
 
 	@Override
-	public String completeTask(String task_name) {
-		// TODO Auto-generated method stub
-		
-		if(!tasks.containsKey(task_name)) {
-			return "Task does not exist";
+	public String completeTask(String taskName) {
+		if(!tasks.containsKey(taskName)) {
+			writeToFile(TASK_ERROR);
+			return TASK_ERROR;
 		}
-		Task task = tasks.get(task_name);
+		Task task = tasks.get(taskName);
 		task.setStatus(Status.COMPLETE);
 		writeToFile(SUCCESS);
 		return SUCCESS;
@@ -161,18 +171,17 @@ public class DataService implements EpitrelloDataServerice {
 
 	@Override
 	public String printUsersByPerformance() {
-		// TODO Auto-generated method stub
-		if(users.size() == 0) {
+		if(users.isEmpty()) {
 			return "No user present";
 		}
 
-		if(tasks.size() == 0) {
+		if(tasks.isEmpty()) {
 			return "No task present";
 		}
 		
 		String user;
 		Integer count;
-		Map<String, Integer> map = new LinkedHashMap<String, Integer>();
+		Map<String, Integer> map = new LinkedHashMap<>();
 		for(Task task: tasks.values()) {
 			user = task.getUser();
 			
@@ -190,8 +199,6 @@ public class DataService implements EpitrelloDataServerice {
 		}
 		
 		
-		//Todo Sorting map by values descending i.e. 
-
 		LinkedHashMap<String, Integer> sortedMap = new LinkedHashMap<>();
 		 
 		map.entrySet()
@@ -200,7 +207,7 @@ public class DataService implements EpitrelloDataServerice {
 		    .forEachOrdered(x -> sortedMap.put(x.getKey(), x.getValue()));
 		
 		Set<String> keys = sortedMap.keySet();
-		StringBuffer str = new StringBuffer();
+		StringBuilder str = new StringBuilder();
 		for(String us: keys) {
 			str.append(us).append("\n");
 		}
@@ -211,7 +218,7 @@ public class DataService implements EpitrelloDataServerice {
 
 	@Override
 	public String printWorkload() {
-		if(users.size() == 0 || tasks.size() == 0) {
+		if(users.isEmpty() || tasks.isEmpty()) {
 			writeToFile("0");
 			return "0";
 		}
@@ -232,18 +239,17 @@ public class DataService implements EpitrelloDataServerice {
 	
 	@Override
 	public String printUsersByWorkload() {
-		// TODO Auto-generated method stub
-		if(users.size() == 0) {
+		if(users.isEmpty()) {
 			return "No user present";
 		}
 
-		if(tasks.size() == 0) {
+		if(tasks.isEmpty()) {
 			return "No task present";
 		}
 		
 		String user;
 		Integer count;
-		Map<String, Integer> map = new LinkedHashMap<String, Integer>();
+		Map<String, Integer> map = new LinkedHashMap<>();
 		for(Task task: tasks.values()) {
 			user = task.getUser();
 			
@@ -259,7 +265,7 @@ public class DataService implements EpitrelloDataServerice {
 		if(map.size() ==0) {
 			return "None of tasks are assigned to user";
 		}
-		//Todo Sorting map by values i.e. 
+		//reorder to ascending
 		LinkedHashMap<String, Integer> sortedMap = new LinkedHashMap<>();
 		 
 		map.entrySet()
@@ -268,7 +274,7 @@ public class DataService implements EpitrelloDataServerice {
 		    .forEachOrdered(x -> sortedMap.put(x.getKey(), x.getValue()));
 
 		Set<String> keys = sortedMap.keySet();
-		StringBuffer str = new StringBuffer();
+		StringBuilder str = new StringBuilder();
 		for(String us: keys) {
 			str.append(us).append("\n");
 		}
@@ -279,9 +285,7 @@ public class DataService implements EpitrelloDataServerice {
 
 	@Override
 	public String printUnassignedTasksByPriority() {
-		// TODO Auto-generated method stub
-		
-		List<String> str = new ArrayList<String>();
+		List<String> str = new ArrayList<>();
 		String user;
 		for (Task task: tasks.values()) {
 			user = task.getUser();
@@ -292,7 +296,7 @@ public class DataService implements EpitrelloDataServerice {
 		}
 		
 		Collections.sort(str);
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (String st: str) {
 			sb.append("\n").append(st);
 		}
@@ -302,9 +306,8 @@ public class DataService implements EpitrelloDataServerice {
 
 	@Override
 	public String deleteTask(String task) {
-		// TODO Auto-generated method stub
 		if(!tasks.containsKey(task)) {
-			return "Task does not exist";
+			return TASK_ERROR;
 		}
 		tasks.remove(task);
 		writeToFile(SUCCESS);
@@ -313,8 +316,7 @@ public class DataService implements EpitrelloDataServerice {
 
 	@Override
 	public String printAllUnfinishedTasksByPriority() {
-		// TODO Auto-generated method stub
-		List<String> str = new ArrayList<String>();
+		List<String> str = new ArrayList<>();
 		String user;
 		for (Task task: tasks.values()) {
 			if(task.getStatus().name().equals(Status.NOT_COMPLETE.name())) {
@@ -327,7 +329,7 @@ public class DataService implements EpitrelloDataServerice {
 		}
 		
 		Collections.sort(str);
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (String st: str) {
 			sb.append("\n").append(st);
 		}
@@ -337,13 +339,14 @@ public class DataService implements EpitrelloDataServerice {
 
 	@Override
 	public String moveTask(String task, String list) {
-		// TODO Auto-generated method stub
 		if(!lists.contains(list)) {
-			return "List does not exist";
+			writeToFile(LIST_ERROR);
+			return LIST_ERROR;
 		}
 		
 		if(!tasks.containsKey(task)) {
-			return "Task does not exist";
+			writeToFile(TASK_ERROR);
+			return TASK_ERROR;
 		}
 		
 		Task tempTask = tasks.get(task);
@@ -355,7 +358,6 @@ public class DataService implements EpitrelloDataServerice {
 
 	@Override
 	public String printList(String list) {
-		// TODO Auto-generated method stub
 		if(list == null || list.isEmpty()) {
 			return "\nInvalid list param";
 		}
@@ -366,7 +368,7 @@ public class DataService implements EpitrelloDataServerice {
 		}
 		
 		String user;		
-		StringBuffer sb = new StringBuffer("\nList ").append(list);
+		StringBuilder sb = new StringBuilder("\nList ").append(list);
 		
 		for(Task task:tasks.values()) {
 			if(list.equals(task.getList())) {
@@ -383,9 +385,8 @@ public class DataService implements EpitrelloDataServerice {
 
 	@Override
 	public String printAllLists() {
-		// TODO Auto-generated method stub
 		
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for(String list: lists) {
 			sb.append("\n").append(printList(list));
 			
@@ -395,26 +396,26 @@ public class DataService implements EpitrelloDataServerice {
 	}
 
 	@Override
-	public String printUserTasks(String user_name) {
-		// TODO Auto-generated method stub
-		if(user_name==null | user_name.isEmpty()) {
+	public String printUserTasks(String userName) {
+		if(userName==null || userName.isEmpty()) {
 			return "Invalid user input";
 		}
 		
-		if(users.size() == 0) {
+		if(users.isEmpty() || !users.contains(userName)) {
+			writeToFile("User does not exist");
 			return "User does not exist";
 		}
 
-		if(tasks.size() == 0) {
+		if(tasks.isEmpty()) {
 			return "No task present";
 		}
 		
 		String user;
-		StringBuffer str = new StringBuffer();
+		StringBuilder str = new StringBuilder();
 		for(Task task: tasks.values()) {
 			user = task.getUser();
 			
-			if(user!=null && !user.isEmpty() && user.equals(user_name)) {
+			if(user!=null && !user.isEmpty() && user.equals(userName)) {
 				str.append("\n").append(task.getPriority()).append(" | ").append(task.getDescription()).append(" | ").append(task.getUser()).append(" | ").append(task.getEstimatedTime()).append("h");
 			}
 		}
@@ -429,7 +430,7 @@ public class DataService implements EpitrelloDataServerice {
 	
 	@Override
 	public String printTotalRemainingTime() {
-		if(tasks.size() == 0) {
+		if(tasks.isEmpty()) {
 			writeToFile("0");
 			return "0";
 		}
@@ -441,7 +442,7 @@ public class DataService implements EpitrelloDataServerice {
 			if(user == null || user.isEmpty()) {
 				continue;
 			}
-			if(task.getStatus().name().equals(Status.NOT_COMPLETE)) {
+			if(task.getStatus().name().equals(Status.NOT_COMPLETE.name())) {
 				effort = effort+task.getEstimatedTime();
 			}
 		}
@@ -451,7 +452,7 @@ public class DataService implements EpitrelloDataServerice {
 	
 	@Override
 	public String printTotalEstimateTime() {
-		if(tasks.size() == 0) {
+		if(tasks.isEmpty()) {
 			writeToFile("0");
 			return "0";
 		}
@@ -477,10 +478,11 @@ public class DataService implements EpitrelloDataServerice {
 		}
 		
 		if(!users.contains(user)) {
+			writeToFile("User does not exist");
 			return "User does not exist";
 		}
 		
-		List<String> str = new ArrayList<String>();
+		List<String> str = new ArrayList<>();
 		for (Task task: tasks.values()) {
 			if(task.getStatus().name().equals(Status.NOT_COMPLETE.name()) && user.equals(task.getUser())) {
 				str.add(task.getPriority()+" | "+task.getName()+" | "+user+" | "+task.getEstimatedTime()+"h");
@@ -488,7 +490,7 @@ public class DataService implements EpitrelloDataServerice {
 		}
 		
 		Collections.sort(str);
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (String st: str) {
 			sb.append("\n").append(st);
 		}
@@ -502,7 +504,7 @@ public class DataService implements EpitrelloDataServerice {
 	 */
 	private boolean writeToFile(String message) 
 	{
-	    BufferedWriter writer;
+	    BufferedWriter writer = null;
 	    boolean status = false;
 		try {
 			writer = new BufferedWriter(new FileWriter(outputFile, true));
@@ -510,11 +512,17 @@ public class DataService implements EpitrelloDataServerice {
 		    writer.close();
 		    status = true;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			System.out.println("Error occured in writing output to file: "+e.getLocalizedMessage());
-		} finally {
+			System.err.println("Error occured in writing output to file: "+e.getLocalizedMessage());
+			try {
+				if(writer!=null) {
+					writer.close();
+				}
+			} catch (IOException e1) {
+				System.err.println("Error occured in closing filewriter: "+e1.getLocalizedMessage());
+			}
 			return status;
 		}
+		return status; 
 	    
 	}
 	

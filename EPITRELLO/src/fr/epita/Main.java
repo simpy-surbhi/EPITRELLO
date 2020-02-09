@@ -2,11 +2,13 @@ package fr.epita;
 
 /* Your imports */
 
+
+
 public class Main {
 
 	public static void main(String[] args) {
 
-		EpitrelloDataServerice dataserverice = DataService.Creator();
+		EpitrelloDataServerice dataserverice = DataService.creator();
 		System.out.println( dataserverice.addUser("Thomas") ); // addUser(string username)
 		System.out.println( dataserverice.addUser("AmirAli") );
 		System.out.println( dataserverice.addUser("Rabih") );
@@ -43,7 +45,7 @@ public class Main {
 		System.out.println( dataserverice.printTask("Have fun") );
 
 	    System.out.println( dataserverice.printList("Code") ); // printList(string list)
-	    System.out.println( dataserverice.printAllLists() );
+	    System.out.println( dataserverice.printAllLists() ); 
 	    System.out.println( dataserverice.printUserTasks("AmirAli") ); // printUserTasks(string user)
 
 	    System.out.println( dataserverice.printUnassignedTasksByPriority() );

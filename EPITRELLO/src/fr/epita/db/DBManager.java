@@ -22,10 +22,9 @@ public class DBManager {
 		return users;
 	}
 
-	static private DBManager dbManager;
+	private static DBManager dbManager;
 	private DBManager() {
-		// TODO Auto-generated constructor stub
-		users = new HashSet<String>();
+		users = new HashSet<>();
 	}
 	
 	public static DBManager getInstance() {
@@ -39,10 +38,8 @@ public class DBManager {
 		try {
 			Class.forName(JDBC_DRIVER); 
 			connection = DriverManager.getConnection(DB_URL,USER,PASS);
-		} catch(SQLException ex) {
-			System.out.println("Error occured in db initialization getConnection: "+ex.getLocalizedMessage());
-		}catch(ClassNotFoundException ex) {
-			System.out.println("Error occured in db initialization getConnection: "+ex.getLocalizedMessage());
+		} catch(Exception ex) {
+			System.err.println("Error occured in db initialization getConnection: "+ex.getLocalizedMessage());
 		}
 		String sql;
 		try {
@@ -50,14 +47,22 @@ public class DBManager {
 			sql =  "CREATE TABLE   users (user VARCHAR(255) not NULL UNIQUE)";  
 			stmt.executeUpdate(sql);
 		} catch(SQLException ex) {
+			ResultSet rs = null;
 			try {
 			sql = "SELECT user FROM users"; 
-			ResultSet rs = connection.createStatement().executeQuery(sql); 
+			rs = stmt.executeQuery(sql); 
 			while(rs.next()) { 
 				users.add(rs.getString("user"));
 			}
 			} catch(SQLException exx) {
-				System.out.println("Error occured in db initialization fetch users: "+exx.getLocalizedMessage());
+				System.err.println("Error occured in db initialization fetch users: "+exx.getLocalizedMessage());
+			} finally {
+				try {
+					if(rs!=null) {
+						rs.close();
+					}
+				} catch (SQLException e) {
+					System.err.println("Error occured in closing rs: "+e.getLocalizedMessage());				}
 			}
 		}
 
@@ -67,10 +72,9 @@ public class DBManager {
 		String sql = "INSERT INTO users " + "VALUES('"+user+"')"; 
         try {
 			stmt.executeUpdate(sql);
-			System.out.println("Inserted records into the table..."); 
 			return true;
 		} catch (SQLException ex) {
-			System.out.println("Error occured in db addUser function: "+ex.getLocalizedMessage());
+			System.err.println("Error occured in db addUser function: "+ex.getLocalizedMessage());
 			return false;
 		} 
 	}
@@ -79,7 +83,7 @@ public class DBManager {
 		try { 
             if(connection!=null) connection.close(); 
          } catch(SQLException ex) { 
- 			System.out.println("Error occured in db releaseResources function: "+ex.getLocalizedMessage());
+ 			System.err.println("Error occured in db releaseResources function: "+ex.getLocalizedMessage());
          } 
 	}
 

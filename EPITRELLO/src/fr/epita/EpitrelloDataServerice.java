@@ -4,6 +4,60 @@ package fr.epita;
  * Interface class where functions are listed
  *
  */
+ /*@startuml
+autonumber
+actor User
+User --> Main
+activate Main
+alt Initialization of System
+Main -> DataService: getInstance
+activate DataService
+DataService -> DBManager: Initialization
+activate DBManager
+DBManager -> DBManager: Initialization of DB
+activate FileWriter
+DataService -> FileWriter: Output file is created
+Deactivate FileWriter
+
+note right of DataService: Initialization of system which includes, DBManager initialization, DataStructure initialization
+end
+
+Main -> DataService: Add User
+DataService -> DBManager: Add User
+DBManager -> DBManager: Persist user information
+activate FileWriter
+DataService -> FileWriter: Output is written to file
+Deactivate FileWriter
+Deactivate DBManager
+
+Main -> DataService: Add List
+DataService -> DataService: Lists updated
+activate FileWriter
+DataService -> FileWriter: Output is written to file
+Deactivate FileWriter
+alt Task related operation
+Main -> DataService: Add Task
+DataService -> DataService: Creation of Task Object and added to service
+activate FileWriter
+DataService -> FileWriter: Output is written to file
+Deactivate FileWriter
+Main -> DataService: Edit Task
+DataService -> DataService: Task updation
+activate FileWriter
+DataService -> FileWriter: Output is written to file
+Deactivate FileWriter
+Main -> DataService: Assign Task
+DataService -> DataService: Assign Task to a user
+note right of DataService: All tasks related operations are performed with DBService
+end
+
+Deactivate DataService
+Deactivate Main
+
+
+@enduml
+*/
+
 public interface EpitrelloDataServerice {
 
 	
