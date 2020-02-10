@@ -3,7 +3,7 @@
   associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
   <enumeration id="1" language="java" name="fr.epita.Status" project="EPITRELLO" 
     file="/EPITRELLO/src/fr/epita/Task.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="117" width="143" x="421" y="989"/>    
+    <position height="117" width="143" x="449" y="970"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -12,7 +12,7 @@
   </enumeration>  
   <interface id="2" language="java" name="fr.epita.EpitrelloDataServerice" project="EPITRELLO" 
     file="/EPITRELLO/src/fr/epita/EpitrelloDataServerice.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="423" width="223" x="158" y="490"/>    
+    <position height="441" width="223" x="186" y="471"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -21,7 +21,7 @@
   </interface>  
   <class id="3" language="java" name="fr.epita.DataService" project="EPITRELLO" 
     file="/EPITRELLO/src/fr/epita/DataService.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="567" width="223" x="189" y="-127"/>    
+    <position height="621" width="223" x="311" y="-200"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -30,73 +30,78 @@
   </class>  
   <class id="4" language="java" name="fr.epita.Task" project="EPITRELLO" file="/EPITRELLO/src/fr/epita/Task.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="835" y="632"/>    
+    <position height="459" width="154" x="449" y="471"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="5" language="java" name="fr.epita.Main" project="EPITRELLO" file="/EPITRELLO/src/fr/epita/Main.java" 
+  <package id="5" language="java" name="fr.epita.db" project="EPITRELLO" file="/EPITRELLO/src/fr/epita/db" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="99" width="113" x="462" y="-127"/>    
+    <position height="50" width="101" x="584" y="-200"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
+  <class id="6" language="java" name="fr.epita.Main" project="EPITRELLO" file="/EPITRELLO/src/fr/epita/Main.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="99" width="113" x="725" y="-200"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="6" language="java" name="fr.epita.db.DBManager" project="EPITRELLO" 
+  <class id="7" language="java" name="fr.epita.db.DBManager" project="EPITRELLO" 
     file="/EPITRELLO/src/fr/epita/db/DBManager.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="797" y="150"/>    
+    <position height="315" width="160" x="643" y="471"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <association id="7">    
+  <realization id="8">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="2"/>  
+  </realization>  
+  <association id="9">    
     <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="8" name="dataServerice"/>      
-      <multiplicity id="9" minimum="0" maximum="1"/>    
+      <attribute id="10" name="dbManager"/>      
+      <multiplicity id="11" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="12">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="13" name="dataServerice"/>      
+      <multiplicity id="14" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="10">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="11" name="dbManager"/>      
-      <multiplicity id="12" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="13">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="14" name="tasks"/>      
-      <multiplicity id="15" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="4" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="16">    
+  <association id="15">    
     <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="17" name="status"/>      
-      <multiplicity id="18" minimum="0" maximum="1"/>    
+      <attribute id="16" name="status"/>      
+      <multiplicity id="17" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <realization id="19">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="2"/>  
-  </realization>  
-  <association id="20">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="21" name="dbManager"/>      
-      <multiplicity id="22" minimum="0" maximum="1"/>    
+  <association id="18">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="19" name="tasks"/>      
+      <multiplicity id="20" minimum="0" maximum="2147483647"/>    
     </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
+    <end type="TARGET" refId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="21">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="22" name="dbManager"/>      
+      <multiplicity id="23" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
