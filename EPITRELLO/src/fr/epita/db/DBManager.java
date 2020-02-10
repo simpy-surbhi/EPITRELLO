@@ -12,6 +12,10 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
+/**
+ * 
+ *DBManager class to make DB initialization and operations to persist data in DB.
+ */
 public class DBManager {
 	
 	static final String JDBC_DRIVER = "org.h2.Driver";   
@@ -22,15 +26,24 @@ public class DBManager {
 	private Connection connection;
 	private Set<String> users;
 	   
+	/**
+	 * Function to get all users informations which are persisted in DB
+	 * @return the list of users persisted in DB
+	 */
 	public Set<String> getUsers() {
 		return users;
 	}
 
 	private static DBManager dbManager;
+	
 	private DBManager() {
 		users = new HashSet<>();
 	}
 	
+	/**
+	 * DBManager is a singleton class. This Function is to return the instance of DBManager
+	 * @return DBManager instance
+	 */
 	public static DBManager getInstance() {
 		if(dbManager == null) {
 			dbManager = new DBManager();
@@ -55,6 +68,9 @@ public class DBManager {
 			return DriverManager.getConnection(jdbcUrl, user, password);
 		}
 	
+	/**
+	 * Function to initialize the DB - create table
+	 */
 	public void initialize() {
 		try {
 			Class.forName(JDBC_DRIVER); 
@@ -92,6 +108,11 @@ public class DBManager {
 
 	}
 	
+	/**
+	 * Function to add user in DB
+	 * @param user information
+	 * @return status of add operation
+	 */
 	public boolean addUser(String user) {
 		String sql = "INSERT INTO users " + "VALUES('"+user+"')"; 
         try {
@@ -103,6 +124,9 @@ public class DBManager {
 		} 
 	}
 	
+	/**
+	 * Function to release the resources like connection
+	 */
 	public void releaseResources() {
 		try { 
             if(connection!=null) connection.close(); 

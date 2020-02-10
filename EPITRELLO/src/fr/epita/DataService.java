@@ -49,9 +49,9 @@ public class DataService implements EpitrelloDataServerice {
 	
 	/**
 	 * creator function to return the object of DataService class
-	 * @return
+	 * @return the object of type EpitrelloDataServerice
 	 */
-	static EpitrelloDataServerice creator() {
+	public static EpitrelloDataServerice creator() {
 		if(dataServerice == null) {
 			dataServerice = new DataService();
 		}

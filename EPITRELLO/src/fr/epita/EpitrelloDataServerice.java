@@ -64,14 +64,14 @@ public interface EpitrelloDataServerice {
 	
 	/**
 	 * Function to add users to the system. User is an unique field.
-	 * @param user
+	 * @param user - user information
 	 * @return the “User already exists” if a duplicate name is entered for the user other wise SUCCESS message.
 	 */
 	String addUser(String user);
 
 	/**
 	 * Function to add a list to the system. Notice the name of each list in the system is a unique field. 
-	 * @param list
+	 * @param list - list information
 	 * @return the “List string already exists” if a duplicate name is entered for the user other wise SUCCESS message.
 	 */
 	String addList(String list);
@@ -113,8 +113,8 @@ public interface EpitrelloDataServerice {
 	 * Priority: <Priority value>
 	 * Estimated Time: <Estimated Time value>
 	 * Assigned to <User>
-	 * @param task
-	 * @return
+	 * @param task - name of task
+	 * @return task details
 	 */
 	String printTask(String task);
 
@@ -210,7 +210,7 @@ public interface EpitrelloDataServerice {
 	
 	/**
 	 * Function returns the estimated completion time of all tasks.
-	 * @return
+	 * @return total estimate time
 	 */
 	String printTotalEstimateTime();
 	
